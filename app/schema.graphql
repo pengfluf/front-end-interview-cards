@@ -1,0 +1,727 @@
+type Query {
+  getAPIInfo: String!
+  getUser(id: ID!): User
+  getPosts: PostPayload
+  getDialogs: DialogPayload
+  getPrivateMessages(from: ID!, amount: Int!): [PrivateMessage]!
+}
+
+type Mutation {
+  signup(name: String!, email: String!, password: String!): AuthPayload
+  login(email: String!, password: String!): AuthPayload
+  changePassword(currentPass: String!, newPass: String!): User
+  changeName(name: String!): User
+  createPost(title: String!, text: String!): Post
+  blockUser(id: String!): User
+  unblockUser(id: String!): User
+  sendPrivateMessage(to: String!, text: String!): PrivateMessage
+}
+
+type Subscription {
+  newPost: PostSubscriptionPayload
+  newPrivateMessage: DialogSubscriptionPayload
+}
+
+interface Node {
+  id: ID!
+}
+
+type PostSubscriptionPayload {
+  mutation: MutationType!
+  node: Post
+  updatedFields: [String!]
+  previousValues: PostPreviousValues
+}
+
+type PostPreviousValues {
+  id: ID!
+  url: String
+  title: String!
+  text: String!
+  createdAt: DateTime!
+}
+
+type DialogSubscriptionPayload {
+  mutation: MutationType!
+  node: Dialog
+  updatedFields: [String!]
+  previousValues: DialogPreviousValues
+}
+
+type DialogPreviousValues {
+  id: ID!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+
+  hasPreviousPage: Boolean!
+
+  startCursor: String
+
+  endCursor: String
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  blockedUsers: [User!]!
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type PostPayload {
+  post(id: ID!): Post
+  posts(first: Int!, after: String, orderBy: PostOrderByInput): [Post]!
+  postsConnection(first: Int!, after: String, orderBy: PostOrderByInput): PostConnection!
+}
+
+type Post {
+  id: ID!
+  url: String
+  title: String!
+  text: String!
+  createdAt: DateTime!
+  postedBy: User!
+}
+
+type PostConnection {
+  pageInfo: PageInfo!
+
+  edges: [PostEdge]!
+  aggregate: AggregatePost!
+}
+
+enum PostOrderByInput {
+  id_ASC
+  id_DESC
+  url_ASC
+  url_DESC
+  title_ASC
+  title_DESC
+  text_ASC
+  text_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type PostEdge {
+  node: Post!
+
+  cursor: String!
+}
+
+type AggregatePost {
+  count: Int!
+}
+
+type Dialog {
+  id: ID!
+  participants(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  messages(where: PrivateMessageWhereInput, orderBy: PrivateMessageOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [PrivateMessage!]
+}
+
+type DialogPayload {
+  dialog(with: ID!): Dialog
+  dialogs(
+    first: Int!,
+    after: String,
+    orderBy: DialogOrderByInput
+  ): [Dialog]!
+  dialogsConnection(
+    first: Int!,
+    after: String,
+    orderBy: DialogOrderByInput
+  ): DialogConnection!
+}
+
+enum DialogOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type DialogConnection {
+  pageInfo: PageInfo!
+
+  edges: [DialogEdge]!
+  aggregate: AggregateDialog!
+}
+
+type DialogEdge {
+  node: Dialog!
+
+  cursor: String!
+}
+
+type AggregateDialog {
+  count: Int!
+}
+
+type PrivateMessage {
+  id: ID!
+  text: String!
+  createdAt: DateTime!
+  postedBy: User!
+  isread: Boolean!
+}
+
+scalar DateTime
+
+input UserWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  blockedUsers_every: UserWhereInput
+  blockedUsers_some: UserWhereInput
+  blockedUsers_none: UserWhereInput
+  _MagicalBackRelation_PostToUser_every: PostWhereInput
+  _MagicalBackRelation_PostToUser_some: PostWhereInput
+  _MagicalBackRelation_PostToUser_none: PostWhereInput
+  _MagicalBackRelation_DialogToUser_every: DialogWhereInput
+  _MagicalBackRelation_DialogToUser_some: DialogWhereInput
+  _MagicalBackRelation_DialogToUser_none: DialogWhereInput
+  _MagicalBackRelation_PrivateMessageToUser_every: PrivateMessageWhereInput
+  _MagicalBackRelation_PrivateMessageToUser_some: PrivateMessageWhereInput
+  _MagicalBackRelation_PrivateMessageToUser_none: PrivateMessageWhereInput
+  _MagicalBackRelation_UserToUser_every: UserWhereInput
+  _MagicalBackRelation_UserToUser_some: UserWhereInput
+  _MagicalBackRelation_UserToUser_none: UserWhereInput
+}
+
+input PrivateMessageWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PrivateMessageWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PrivateMessageWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PrivateMessageWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  text: String
+
+  """All values that are not equal to given value."""
+  text_not: String
+
+  """All values that are contained in given list."""
+  text_in: [String!]
+
+  """All values that are not contained in given list."""
+  text_not_in: [String!]
+
+  """All values less than the given value."""
+  text_lt: String
+
+  """All values less than or equal the given value."""
+  text_lte: String
+
+  """All values greater than the given value."""
+  text_gt: String
+
+  """All values greater than or equal the given value."""
+  text_gte: String
+
+  """All values containing the given string."""
+  text_contains: String
+
+  """All values not containing the given string."""
+  text_not_contains: String
+
+  """All values starting with the given string."""
+  text_starts_with: String
+
+  """All values not starting with the given string."""
+  text_not_starts_with: String
+
+  """All values ending with the given string."""
+  text_ends_with: String
+
+  """All values not ending with the given string."""
+  text_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  isread: Boolean
+
+  """All values that are not equal to given value."""
+  isread_not: Boolean
+  postedBy: UserWhereInput
+  _MagicalBackRelation_DialogToPrivateMessage_every: DialogWhereInput
+  _MagicalBackRelation_DialogToPrivateMessage_some: DialogWhereInput
+  _MagicalBackRelation_DialogToPrivateMessage_none: DialogWhereInput
+}
+
+enum UserOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  email_ASC
+  email_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+enum PrivateMessageOrderByInput {
+  id_ASC
+  id_DESC
+  text_ASC
+  text_DESC
+  createdAt_ASC
+  createdAt_DESC
+  isread_ASC
+  isread_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+input PostWhereInput {
+  """Logical AND on all given filters."""
+  AND: [PostWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [PostWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [PostWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  url: String
+
+  """All values that are not equal to given value."""
+  url_not: String
+
+  """All values that are contained in given list."""
+  url_in: [String!]
+
+  """All values that are not contained in given list."""
+  url_not_in: [String!]
+
+  """All values less than the given value."""
+  url_lt: String
+
+  """All values less than or equal the given value."""
+  url_lte: String
+
+  """All values greater than the given value."""
+  url_gt: String
+
+  """All values greater than or equal the given value."""
+  url_gte: String
+
+  """All values containing the given string."""
+  url_contains: String
+
+  """All values not containing the given string."""
+  url_not_contains: String
+
+  """All values starting with the given string."""
+  url_starts_with: String
+
+  """All values not starting with the given string."""
+  url_not_starts_with: String
+
+  """All values ending with the given string."""
+  url_ends_with: String
+
+  """All values not ending with the given string."""
+  url_not_ends_with: String
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  text: String
+
+  """All values that are not equal to given value."""
+  text_not: String
+
+  """All values that are contained in given list."""
+  text_in: [String!]
+
+  """All values that are not contained in given list."""
+  text_not_in: [String!]
+
+  """All values less than the given value."""
+  text_lt: String
+
+  """All values less than or equal the given value."""
+  text_lte: String
+
+  """All values greater than the given value."""
+  text_gt: String
+
+  """All values greater than or equal the given value."""
+  text_gte: String
+
+  """All values containing the given string."""
+  text_contains: String
+
+  """All values not containing the given string."""
+  text_not_contains: String
+
+  """All values starting with the given string."""
+  text_starts_with: String
+
+  """All values not starting with the given string."""
+  text_not_starts_with: String
+
+  """All values ending with the given string."""
+  text_ends_with: String
+
+  """All values not ending with the given string."""
+  text_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  postedBy: UserWhereInput
+}
+
+input DialogWhereInput {
+  """Logical AND on all given filters."""
+  AND: [DialogWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [DialogWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [DialogWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  participants_every: UserWhereInput
+  participants_some: UserWhereInput
+  participants_none: UserWhereInput
+  messages_every: PrivateMessageWhereInput
+  messages_some: PrivateMessageWhereInput
+  messages_none: PrivateMessageWhereInput
+}

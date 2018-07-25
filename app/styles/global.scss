@@ -1,0 +1,21 @@
+.container {
+  max-width: 960px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.row {
+  margin-right: -10px;
+  margin-left: -10px;
+}
+
+[class^=col-] {
+  padding-right: 10px;
+  padding-left: 10px;
+}
+
+button:-moz-focusring {
+  outline: none;
+}
