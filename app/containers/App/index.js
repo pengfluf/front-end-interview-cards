@@ -7,7 +7,8 @@
  */
 
 import React from 'react';
+import WorkSpace from 'containers/WorkSpace';
 
 export default function App() {
-  return <div>App</div>;
+  return <WorkSpace />;
 }

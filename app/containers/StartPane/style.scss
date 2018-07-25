@@ -1,0 +1,23 @@
+.startpane {
+  display: flex;
+  flex-direction: column;
+
+  margin-top: 20vh;
+
+  justify-content: center;
+  align-items: center;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter {
+  margin-top: 10px;
+
+
+  label {
+    margin-right: 10px;
+  }
+}
