@@ -13,6 +13,7 @@ export const initialState = fromJS({
     CSS: {},
     JS: {},
   },
+  selectedCategoryList: [],
   categories: {
     HTML: {},
     CSS: {},
@@ -28,15 +29,22 @@ function workSpaceReducer(state = initialState, action) {
         .set('categories', action.categories)
         .set('categoryList', action.categoryList);
     case ADD_CATEGORY:
-      return state.setIn(
-        ['selectedCategories', action.categoryName],
-        action.category,
-      );
+      return state
+        .setIn(
+          ['selectedCategoryList', state.get('selectedCategoryList').size],
+          action.categoryName,
+        )
+        .setIn(['selectedCategories', action.categoryName], action.category);
     case REMOVE_CATEGORY:
-      return state.updateIn(
-        ['selectedCategories', action.categoryName],
-        () => ({}),
-      );
+      return state
+        .deleteIn([
+          'selectedCategoryList',
+          state
+            .get('selectedCategoryList')
+            .toJS()
+            .findIndex(categoryName => categoryName === action.categoryName),
+        ])
+        .updateIn(['selectedCategories', action.categoryName], () => ({}));
     default:
       return state;
   }

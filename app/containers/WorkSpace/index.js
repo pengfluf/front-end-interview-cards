@@ -9,8 +9,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
+import { Switch, Route } from 'react-router-dom';
+import { withRouter } from 'react-router';
 
 import StartPane from 'containers/StartPane';
+import Interview from 'containers/Interview';
 
 import data, { list } from 'data';
 import injectReducer from 'utils/injectReducer';
@@ -18,7 +21,6 @@ import makeSelectWorkSpace from './selectors';
 import reducer from './reducer';
 import { copyCategories } from './actions';
 
-/* eslint-disable react/prefer-stateless-function */
 export class WorkSpace extends React.Component {
   componentDidMount() {
     this.props.copyCategories(data, list);
@@ -27,13 +29,18 @@ export class WorkSpace extends React.Component {
   render() {
     return (
       <div>
-        <StartPane />
+        <Switch>
+          <Route path="/interview" component={Interview} />
+          <Route path="/" component={StartPane} />
+        </Switch>
       </div>
     );
   }
 }
 
-WorkSpace.propTypes = {};
+WorkSpace.propTypes = {
+  copyCategories: PropTypes.func,
+};
 
 const mapStateToProps = createStructuredSelector({
   workspace: makeSelectWorkSpace(),
@@ -53,7 +60,9 @@ const withConnect = connect(
 
 const withReducer = injectReducer({ key: 'workSpace', reducer });
 
-export default compose(
-  withReducer,
-  withConnect,
-)(WorkSpace);
+export default withRouter(
+  compose(
+    withReducer,
+    withConnect,
+  )(WorkSpace),
+);

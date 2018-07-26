@@ -10,9 +10,10 @@ import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { createStructuredSelector } from 'reselect';
 import { compose } from 'redux';
+import { Link } from 'react-router-dom';
 
 import {
-  makeSelectSelectedCategories,
+  makeSelectSelectedCategoryList,
   makeSelectCategories,
   makeSelectCategoryList,
 } from 'containers/WorkSpace/selectors';
@@ -23,7 +24,6 @@ import makeSelectStartPane from './selectors';
 import reducer from './reducer';
 import style from './style.scss';
 
-/* eslint-disable react/prefer-stateless-function */
 export class StartPane extends React.Component {
   constructor(props) {
     super(props);
@@ -32,7 +32,7 @@ export class StartPane extends React.Component {
   }
 
   handleCheckboxChange(categoryName, category) {
-    if (Object.keys(this.props.selectedCategories[categoryName]).length) {
+    if (this.props.selectedCategoryList.some(name => name === categoryName)) {
       this.props.removeCategory(categoryName);
     } else {
       this.props.addCategory(categoryName, category);
@@ -40,7 +40,7 @@ export class StartPane extends React.Component {
   }
 
   render() {
-    const { categoryList, categories } = this.props;
+    const { categoryList, categories, selectedCategoryList } = this.props;
     return (
       <div className={style.startpane}>
         <Helmet>
@@ -61,10 +61,9 @@ export class StartPane extends React.Component {
                   id={`category${categoryName}`}
                   name="category"
                   type="checkbox"
-                  checked={
-                    Object.keys(this.props.selectedCategories[categoryName])
-                      .length
-                  }
+                  checked={selectedCategoryList.some(
+                    name => name === categoryName,
+                  )}
                   onChange={() => {
                     this.handleCheckboxChange(
                       categoryName,
@@ -78,6 +77,11 @@ export class StartPane extends React.Component {
             <div>Loading...</div>
           )}
         </div>
+        {/* eslint-disable jsx-a11y/anchor-is-valid */}
+        {selectedCategoryList.length ? (
+          <Link to="/interview">Start</Link>
+        ) : null}
+        {/* eslint-enable */}
       </div>
     );
   }
@@ -85,7 +89,7 @@ export class StartPane extends React.Component {
 
 StartPane.propTypes = {
   categories: PropTypes.object,
-  selectedCategories: PropTypes.object,
+  selectedCategoryList: PropTypes.array,
   categoryList: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   addCategory: PropTypes.func,
   removeCategory: PropTypes.func,
@@ -93,7 +97,7 @@ StartPane.propTypes = {
 
 const mapStateToProps = createStructuredSelector({
   startpane: makeSelectStartPane(),
-  selectedCategories: makeSelectSelectedCategories(),
+  selectedCategoryList: makeSelectSelectedCategoryList(),
   categories: makeSelectCategories(),
   categoryList: makeSelectCategoryList(),
 });
