@@ -18,6 +18,7 @@ import {
 import injectReducer from 'utils/injectReducer';
 import makeSelectInterview from './selectors';
 import reducer from './reducer';
+import style from './style.scss';
 
 import {
   getQuestion,
@@ -26,14 +27,17 @@ import {
   loadingFinished,
 } from './actions';
 
-/* eslint-disable react/prefer-stateless-function */
 export class Interview extends React.Component {
   async componentDidMount() {
-    await this.props.startLoading();
+    if (!this.props.selectedCategoryList.length) {
+      this.props.history.push('/');
+    } else {
+      await this.props.startLoading();
 
-    await this.getQuestion();
+      await this.getQuestion();
 
-    await this.props.loadingFinished();
+      await this.props.loadingFinished();
+    }
   }
 
   getQuestion() {
@@ -61,27 +65,23 @@ export class Interview extends React.Component {
     const { answerShown, loaded, loading } = this.props.interview;
     if (loaded) {
       return (
-        <div>
+        <div className={style.interview}>
           <Helmet>
             <title>Interview</title>
             <meta name="description" content="Description of Interview" />
           </Helmet>
           <div>Interview</div>
-          {typeof question === 'string' ? (
-            <p>{question}</p>
-          ) : (
-            question.map((item, index) => <p key={index}>{item}</p>)
-          )}
+          <p>{question}</p>
 
-          {typeof answer === 'string' && answerShown ? <p>{answer}</p> : null}
-
-          {!typeof answer === 'string' && answerShown
-            ? answer.map((item, index) => <p key={index}>{item}</p>)
-            : null}
-
+          {/* eslint-disable react/no-array-index-key */}
           {!answerShown ? (
-            <button onClick={this.props.checkAnswer}>check the answer</button>
-          ) : null}
+            <button onClick={this.props.checkAnswer}>Check the answer</button>
+          ) : (
+            answer.map((item, index) => (
+              <p key={`${item.substr(0, 5)}${index}`}>{item}</p>
+            ))
+          )}
+          {/* eslint-enable */}
         </div>
       );
     } else if (loading) {
@@ -94,15 +94,22 @@ export class Interview extends React.Component {
 Interview.propTypes = {
   interview: PropTypes.shape({
     block: PropTypes.shape({
-      question: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
-      answer: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
+      question: PropTypes.string,
+      answer: PropTypes.array,
     }),
     answerShown: PropTypes.bool,
+    loaded: PropTypes.bool,
+    loading: PropTypes.bool,
   }),
   getQuestion: PropTypes.func,
   checkAnswer: PropTypes.func,
   startLoading: PropTypes.func,
   loadingFinished: PropTypes.func,
+  selectedCategories: PropTypes.object,
+  selectedCategoryList: PropTypes.array,
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }),
 };
 
 const mapStateToProps = createStructuredSelector({
