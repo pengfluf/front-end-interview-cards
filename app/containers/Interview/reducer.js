@@ -10,6 +10,8 @@ import {
   CHECK_ANSWER,
   START_LOADING,
   LOADING_FINISHED,
+  FINISH_QUESTION,
+  RESET,
 } from './constants';
 
 export const initialState = fromJS({
@@ -20,6 +22,7 @@ export const initialState = fromJS({
   answerShown: false,
   loading: false,
   loaded: false,
+  readyToGo: false,
 });
 
 function interviewReducer(state = initialState, action) {
@@ -35,6 +38,13 @@ function interviewReducer(state = initialState, action) {
       return state.set('loading', true);
     case LOADING_FINISHED:
       return state.set('loading', false).set('loaded', true);
+    case FINISH_QUESTION:
+      return state.set('readyToGo', true);
+    case RESET:
+      return state
+        .set('answerShown', false)
+        .set('myAnswer', '')
+        .set('readyToGo', false);
     default:
       return state;
   }

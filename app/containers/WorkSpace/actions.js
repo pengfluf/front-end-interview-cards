@@ -4,7 +4,12 @@
  *
  */
 
-import { COPY_CATEGORIES, ADD_CATEGORY, REMOVE_CATEGORY } from './constants';
+import {
+  COPY_CATEGORIES,
+  ADD_CATEGORY,
+  REMOVE_CATEGORY,
+  QUESTION_ANSWERED,
+} from './constants';
 
 export function copyCategories(categories, categoryList) {
   return {
@@ -25,6 +30,15 @@ export function addCategory(categoryName, category) {
 export function removeCategory(categoryName) {
   return {
     type: REMOVE_CATEGORY,
+    categoryName,
+  };
+}
+
+export function questionAnswered(question, questionIndex, categoryName) {
+  return {
+    type: QUESTION_ANSWERED,
+    question,
+    questionIndex,
     categoryName,
   };
 }

@@ -4,7 +4,7 @@
  *
  */
 
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
@@ -14,6 +14,8 @@ import {
   makeSelectSelectedCategories,
   makeSelectSelectedCategoryList,
 } from 'containers/WorkSpace/selectors';
+
+import { questionAnswered } from 'containers/WorkSpace/actions';
 
 import injectReducer from 'utils/injectReducer';
 import makeSelectInterview from './selectors';
@@ -25,9 +27,18 @@ import {
   checkAnswer,
   startLoading,
   loadingFinished,
+  finishQuestion,
+  reset,
 } from './actions';
 
 export class Interview extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.questionAnswered = this.questionAnswered.bind(this);
+    this.goNext = this.goNext.bind(this);
+  }
+
   async componentDidMount() {
     if (!this.props.selectedCategoryList.length) {
       this.props.history.push('/');
@@ -60,13 +71,36 @@ export class Interview extends React.Component {
     this.props.getQuestion(categoryName, blockIndex, block);
   }
 
+  questionAnswered() {
+    const {
+      myAnswer,
+      block,
+      blockIndex,
+      currentCategory,
+    } = this.props.interview;
+    const question = {
+      myAnswer,
+      ...block,
+    };
+
+    this.props.questionAnswered(question, blockIndex, currentCategory);
+
+    this.props.finishQuestion();
+  }
+
+  goNext() {
+    this.props.reset();
+    this.getQuestion();
+  }
+
   render() {
     const { question, answer } = this.props.interview.block;
     const {
-      currentCategory,
-      answerShown,
       loaded,
       loading,
+      currentCategory,
+      answerShown,
+      readyToGo,
     } = this.props.interview;
     if (loaded) {
       return (
@@ -99,6 +133,19 @@ export class Interview extends React.Component {
                 Check the answer
               </button>
             )}
+
+            {answerShown && (!readyToGo && answerShown) ? (
+              <Fragment>
+                <button onClick={this.questionAnswered}>
+                  My answer is good 😎
+                </button>
+                <button>I could do better ☕️</button>
+              </Fragment>
+            ) : (
+              <Fragment>
+                <button onClick={this.goNext}>Go to the next question</button>
+              </Fragment>
+            )}
           </div>
         </div>
       );
@@ -115,15 +162,21 @@ Interview.propTypes = {
       question: PropTypes.string,
       answer: PropTypes.array,
     }),
+    blockIndex: PropTypes.number,
+    myAnswer: PropTypes.string,
     currentCategory: PropTypes.string,
     answerShown: PropTypes.bool,
     loaded: PropTypes.bool,
     loading: PropTypes.bool,
+    readyToGo: PropTypes.bool,
   }),
   getQuestion: PropTypes.func,
   checkAnswer: PropTypes.func,
+  questionAnswered: PropTypes.func,
   startLoading: PropTypes.func,
   loadingFinished: PropTypes.func,
+  finishQuestion: PropTypes.func,
+  reset: PropTypes.func,
   selectedCategories: PropTypes.object,
   selectedCategoryList: PropTypes.array,
   history: PropTypes.shape({
@@ -144,6 +197,10 @@ function mapDispatchToProps(dispatch) {
     checkAnswer: () => dispatch(checkAnswer()),
     startLoading: () => dispatch(startLoading()),
     loadingFinished: () => dispatch(loadingFinished()),
+    questionAnswered: (question, questionIndex, categoryName) =>
+      dispatch(questionAnswered(question, questionIndex, categoryName)),
+    finishQuestion: () => dispatch(finishQuestion()),
+    reset: () => dispatch(reset()),
   };
 }
 

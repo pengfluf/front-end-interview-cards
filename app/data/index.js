@@ -15,9 +15,8 @@ export default {
       ],
     },
     {
-      question: [
+      question:
         'What kind of things must you be wary of when designing or developing for multilingual sites?',
-      ],
       answer: [
         'Use lang attribute in your HTML.',
         'Directing users to their native language - Allow a user to change his country/language easily without hassle.',

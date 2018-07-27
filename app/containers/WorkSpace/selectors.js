@@ -16,10 +16,10 @@ const makeSelectSelectedCategories = () =>
     substate.get('selectedCategories').toJS(),
   );
 
-  const makeSelectSelectedCategoryList = () =>
-    createSelector(selectWorkSpaceDomain, substate =>
-      substate.get('selectedCategoryList').toJS(),
-    );
+const makeSelectSelectedCategoryList = () =>
+  createSelector(selectWorkSpaceDomain, substate =>
+    substate.get('selectedCategoryList').toJS(),
+  );
 
 const makeSelectCategories = () =>
   createSelector(selectWorkSpaceDomain, substate => substate.get('categories'));
