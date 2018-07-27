@@ -7,6 +7,9 @@
 import {
   GET_QUESTION,
   CHECK_ANSWER,
+  UPDATE_MY_ANSWER,
+  SHOW_MY_ANSWER,
+  HIDE_MY_ANSWER,
   START_LOADING,
   LOADING_FINISHED,
   FINISH_QUESTION,
@@ -25,6 +28,25 @@ export function getQuestion(currentCategory, blockIndex, block) {
 export function checkAnswer() {
   return {
     type: CHECK_ANSWER,
+  };
+}
+
+export function updateMyAnswer(text) {
+  return {
+    type: UPDATE_MY_ANSWER,
+    text,
+  };
+}
+
+export function showMyAnswer() {
+  return {
+    type: SHOW_MY_ANSWER,
+  };
+}
+
+export function hideMyAnswer() {
+  return {
+    type: HIDE_MY_ANSWER,
   };
 }
 

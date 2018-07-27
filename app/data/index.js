@@ -115,9 +115,8 @@ export default {
       ],
     },
     {
-      question: [
+      question:
         'What\'s the difference between "resetting" and "normalizing" CSS? Which would you choose, and why?',
-      ],
       answer: [
         'Resetting - Resetting is meant to strip all default browser styling on elements. For e.g. margins, paddings, font-sizes of all elements are reset to be the same. You will have to redeclare styling for common typographic elements.',
         'Normalizing - Normalizing preserves useful default styles rather than "unstyling" everything. It also corrects bugs for common browser dependencies.',

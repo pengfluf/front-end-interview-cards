@@ -25,6 +25,9 @@ import style from './style.scss';
 import {
   getQuestion,
   checkAnswer,
+  updateMyAnswer,
+  showMyAnswer,
+  hideMyAnswer,
   startLoading,
   loadingFinished,
   finishQuestion,
@@ -37,6 +40,7 @@ export class Interview extends React.Component {
 
     this.questionAnswered = this.questionAnswered.bind(this);
     this.goNext = this.goNext.bind(this);
+    this.toggleSpoiler = this.toggleSpoiler.bind(this);
   }
 
   async componentDidMount() {
@@ -61,10 +65,13 @@ export class Interview extends React.Component {
 
     const selectedCategory = selectedCategories[categoryName];
 
-    let blockIndex = 0;
-    if (selectedCategory.length > 1) {
-      blockIndex = Math.floor(Math.random() * selectedCategory.length);
-    }
+    const blockIndex = Math.floor(Math.random() * selectedCategory.length);
+
+    // TODO:
+    // if (blockIndex === 0) {
+    //   all questions are done
+    //   show results
+    // }
 
     const block = selectedCategory[blockIndex];
 
@@ -93,12 +100,22 @@ export class Interview extends React.Component {
     this.getQuestion();
   }
 
+  toggleSpoiler() {
+    if (this.props.interview.myAnswerShown) {
+      this.props.hideMyAnswer();
+    } else {
+      this.props.showMyAnswer();
+    }
+  }
+
   render() {
     const { question, answer } = this.props.interview.block;
     const {
       loaded,
       loading,
       currentCategory,
+      myAnswer,
+      myAnswerShown,
       answerShown,
       readyToGo,
     } = this.props.interview;
@@ -111,6 +128,14 @@ export class Interview extends React.Component {
           </Helmet>
           <div className={style.title}>{currentCategory}</div>
           <p className={style.question}>{question}</p>
+
+          {!answerShown && (
+            <textarea
+              className={style.myAnswerField}
+              value={myAnswer}
+              onChange={e => this.props.updateMyAnswer(e.target.value)}
+            />
+          )}
 
           {/* eslint-disable react/no-array-index-key */}
           {answerShown &&
@@ -127,7 +152,7 @@ export class Interview extends React.Component {
           <div className={style.controls}>
             {!answerShown && (
               <button
-                className={style.checkAnswer}
+                className={style.control}
                 onClick={this.props.checkAnswer}
               >
                 Check the answer
@@ -136,17 +161,52 @@ export class Interview extends React.Component {
 
             {answerShown && (!readyToGo && answerShown) ? (
               <Fragment>
-                <button onClick={this.questionAnswered}>
-                  My answer is good 😎
+                <button
+                  className={style.control}
+                  onClick={this.questionAnswered}
+                >
+                  I knew that{' '}
+                  <span role="img" aria-label="Sunglasses">
+                    😎
+                  </span>
                 </button>
-                <button>I could do better ☕️</button>
+                <button className={style.control} onClick={this.goNext}>
+                  I need to study more{' '}
+                  <span role="img" aria-label="Sunglasses">
+                    ☕️
+                  </span>
+                </button>
               </Fragment>
             ) : (
               <Fragment>
-                <button onClick={this.goNext}>Go to the next question</button>
+                <button className={style.control} onClick={this.goNext}>
+                  Go to the next question
+                </button>
               </Fragment>
             )}
           </div>
+
+          {answerShown && myAnswer.length ? (
+            <button
+              onClick={this.toggleSpoiler}
+              className={[
+                myAnswerShown ? style.spoiler__opened : style.spoiler,
+              ].join(' ')}
+            >
+              <span
+                className={[
+                  myAnswerShown
+                    ? style.spoiler_arrow__down
+                    : style.spoiler_arrow,
+                ].join(' ')}
+              >
+                {'>'}
+              </span>{' '}
+              {myAnswerShown ? 'Hide' : 'Show'} my answer
+            </button>
+          ) : null}
+
+          {myAnswerShown && <p className={style.myAnswer}>{myAnswer}</p>}
         </div>
       );
     } else if (loading) {
@@ -164,14 +224,18 @@ Interview.propTypes = {
     }),
     blockIndex: PropTypes.number,
     myAnswer: PropTypes.string,
-    currentCategory: PropTypes.string,
+    myAnswerShown: PropTypes.bool,
     answerShown: PropTypes.bool,
+    currentCategory: PropTypes.string,
     loaded: PropTypes.bool,
     loading: PropTypes.bool,
     readyToGo: PropTypes.bool,
   }),
   getQuestion: PropTypes.func,
   checkAnswer: PropTypes.func,
+  updateMyAnswer: PropTypes.func,
+  showMyAnswer: PropTypes.func,
+  hideMyAnswer: PropTypes.func,
   questionAnswered: PropTypes.func,
   startLoading: PropTypes.func,
   loadingFinished: PropTypes.func,
@@ -195,6 +259,9 @@ function mapDispatchToProps(dispatch) {
     getQuestion: (currentCategory, blockIndex, block) =>
       dispatch(getQuestion(currentCategory, blockIndex, block)),
     checkAnswer: () => dispatch(checkAnswer()),
+    updateMyAnswer: text => dispatch(updateMyAnswer(text)),
+    showMyAnswer: () => dispatch(showMyAnswer()),
+    hideMyAnswer: () => dispatch(hideMyAnswer()),
     startLoading: () => dispatch(startLoading()),
     loadingFinished: () => dispatch(loadingFinished()),
     questionAnswered: (question, questionIndex, categoryName) =>

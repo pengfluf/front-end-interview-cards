@@ -50,6 +50,22 @@ textarea {
   resize: vertical;
 }
 
+p,
+textarea {
+  font-size: 18px;
+  line-height: 1.58;
+
+  letter-spacing: -0.004em;
+  word-wrap: break-word;
+  word-break: break-word;
+
+  @media (min-width: 768px) {
+    font-size: 21px;
+
+    letter-spacing: -0.003em;
+  }
+}
+
 img {
   display: block;
 
