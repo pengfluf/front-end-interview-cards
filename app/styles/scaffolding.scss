@@ -6,21 +6,17 @@
 
 html {
   box-sizing: border-box;
-  @media (min-width: 992px) {
-    overflow-y: hidden;
-  }
 }
 
 body {
-  font-family: "Roboto Condensed", Arial, sans-serif;
+  font-family: "FFKievit",Georgia,"Cambria","Times New Roman",Times,serif;
   font-weight: 400;
-  font-stretch: condensed;
   line-height: 1;
 
   overflow-x: hidden;
 
   margin: 0;
-  padding: 0;
+  padding: 0;;
 }
 
 a {

@@ -62,7 +62,12 @@ export class Interview extends React.Component {
 
   render() {
     const { question, answer } = this.props.interview.block;
-    const { answerShown, loaded, loading } = this.props.interview;
+    const {
+      currentCategory,
+      answerShown,
+      loaded,
+      loading,
+    } = this.props.interview;
     if (loaded) {
       return (
         <div className={style.interview}>
@@ -70,18 +75,31 @@ export class Interview extends React.Component {
             <title>Interview</title>
             <meta name="description" content="Description of Interview" />
           </Helmet>
-          <div>Interview</div>
-          <p>{question}</p>
+          <div className={style.title}>{currentCategory}</div>
+          <p className={style.question}>{question}</p>
 
           {/* eslint-disable react/no-array-index-key */}
-          {!answerShown ? (
-            <button onClick={this.props.checkAnswer}>Check the answer</button>
-          ) : (
+          {answerShown &&
             answer.map((item, index) => (
-              <p key={`${item.substr(0, 5)}${index}`}>{item}</p>
-            ))
-          )}
+              <p
+                className={style.answerChunk}
+                key={`${item.substr(0, 5)}${index}`}
+              >
+                {item}
+              </p>
+            ))}
           {/* eslint-enable */}
+
+          <div className={style.controls}>
+            {!answerShown && (
+              <button
+                className={style.checkAnswer}
+                onClick={this.props.checkAnswer}
+              >
+                Check the answer
+              </button>
+            )}
+          </div>
         </div>
       );
     } else if (loading) {
@@ -97,6 +115,7 @@ Interview.propTypes = {
       question: PropTypes.string,
       answer: PropTypes.array,
     }),
+    currentCategory: PropTypes.string,
     answerShown: PropTypes.bool,
     loaded: PropTypes.bool,
     loading: PropTypes.bool,

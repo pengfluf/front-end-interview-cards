@@ -26,16 +26,17 @@ import LanguageProvider from 'containers/LanguageProvider';
 import 'file-loader?name=[name].[ext]!./.htaccess';
 /* eslint-enable import/no-unresolved, import/extensions */
 
-import configureStore from './configureStore';
-
-// Import i18n messages
-import { translationMessages } from './i18n';
-
 // CSS from node_modules
 import 'normalize.css';
 import 'bootstrap/dist/css/bootstrap-grid.css';
 
-import './styles/style.scss';
+import 'styles/style.scss';
+import 'styles/fonts';
+
+import configureStore from './configureStore';
+
+// Import i18n messages
+import { translationMessages } from './i18n';
 
 // Create redux store with history
 const initialState = {};
