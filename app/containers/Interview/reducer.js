@@ -15,6 +15,7 @@ import {
   LOADING_FINISHED,
   FINISH_QUESTION,
   RESET,
+  ALL_QUESTIONS_ANSWERED,
 } from './constants';
 
 export const initialState = fromJS({
@@ -27,6 +28,7 @@ export const initialState = fromJS({
   loading: false,
   loaded: false,
   readyToGo: false,
+  allQuestionsAnswered: false,
 });
 
 function interviewReducer(state = initialState, action) {
@@ -56,6 +58,8 @@ function interviewReducer(state = initialState, action) {
         .set('myAnswerShown', false)
         .set('myAnswer', '')
         .set('readyToGo', false);
+    case ALL_QUESTIONS_ANSWERED:
+      return state.set('allQuestionsAnswered', true);
     default:
       return state;
   }

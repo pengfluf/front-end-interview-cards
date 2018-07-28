@@ -14,6 +14,7 @@ import {
   LOADING_FINISHED,
   FINISH_QUESTION,
   RESET,
+  ALL_QUESTIONS_ANSWERED,
 } from './constants';
 
 export function getQuestion(currentCategory, blockIndex, block) {
@@ -71,5 +72,11 @@ export function finishQuestion() {
 export function reset() {
   return {
     type: RESET,
+  };
+}
+
+export function finishInterview() {
+  return {
+    type: ALL_QUESTIONS_ANSWERED,
   };
 }

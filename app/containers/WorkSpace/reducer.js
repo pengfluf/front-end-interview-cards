@@ -68,7 +68,11 @@ function workSpaceReducer(state = initialState, action) {
           ],
           fromJS(action.question),
         )
-        .deleteIn(['selectedCategories', action.categoryName, 0]);
+        .deleteIn([
+          'selectedCategories',
+          action.categoryName,
+          action.questionIndex,
+        ]);
     default:
       return state;
   }

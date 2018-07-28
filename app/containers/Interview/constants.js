@@ -16,3 +16,5 @@ export const LOADING_FINISHED = 'Interview/LOADING_FINISHED';
 
 export const FINISH_QUESTION = 'Interview/FINISH_QUESTION';
 export const RESET = 'Interview/RESET';
+
+export const ALL_QUESTIONS_ANSWERED = 'Interview/ALL_QUESTIONS_ANSWERED';

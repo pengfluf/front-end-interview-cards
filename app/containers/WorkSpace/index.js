@@ -14,6 +14,7 @@ import { withRouter } from 'react-router';
 
 import StartPane from 'containers/StartPane';
 import Interview from 'containers/Interview';
+import Results from 'containers/Results';
 
 import data, { list } from 'data';
 import injectReducer from 'utils/injectReducer';
@@ -30,6 +31,7 @@ export class WorkSpace extends React.Component {
     return (
       <div>
         <Switch>
+          <Route path="/results" component={Results} />
           <Route path="/interview" component={Interview} />
           <Route path="/" component={StartPane} />
         </Switch>

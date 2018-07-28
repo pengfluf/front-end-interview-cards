@@ -241,11 +241,11 @@ export default {
         'screen - for computer screens, tablets, smart-phones etc.',
         "Here is an example of print media type's usage:",
         `
-@media print {
-  body {
-    color: black;
-  }
-}`,
+    @media print {
+      body {
+        color: black;
+      }
+    }`,
       ],
     },
     {
@@ -390,27 +390,27 @@ export default {
         'Note that these two 2 approaches are not exclusive.',
         "Making a website responsive means the some elements will respond by adapting its size or other functionality according to the device's screen size, typically the viewport width, through CSS media queries, for example, making the font size smaller on smaller devices.",
         `
-@media (min-width: 601px) {
-  .my-class {
-    font-size: 24px;
-  }
-}
-@media (max-width: 600px) {
-  .my-class {
-    font-size: 12px;
-  }
-}`,
+    @media (min-width: 601px) {
+      .my-class {
+        font-size: 24px;
+      }
+    }
+    @media (max-width: 600px) {
+      .my-class {
+        font-size: 12px;
+      }
+    }`,
         'A mobile-first strategy is also responsive, however it agrees we should default and define all the styles for mobile devices, and only add specific responsive rules to other devices later. Following the previous example:',
         `
-.my-class {
-  font-size: 12px;
-}
+    .my-class {
+      font-size: 12px;
+    }
 
-@media (min-width: 600px) {
-  .my-class {
-    font-size: 24px;
-  }
-}`,
+    @media (min-width: 600px) {
+      .my-class {
+        font-size: 24px;
+      }
+    }`,
         'A mobile-first strategy has 2 main advantages:',
         "It's more performant on mobile devices, since all the rules applied for them don't have to be validated against any media queries.",
         'It forces to write cleaner code in respect to responsive CSS rules.',
@@ -433,17 +433,17 @@ export default {
         'In order to have crisp, good-looking graphics that make the best of retina displays we need to use high resolution images whenever possible. However using always the highest resolution images will have an impact on performance as more bytes will need to be sent over the wire.',
         'To overcome this problem, we can use responsive images, as specified in HTML5. It requires making available different resolution files of the same image to the browser and let it decide which image is best, using the html attribute srcset and optionally sizes, for instance:',
         `
-<div responsive-background-image>
-  <img src="/images/test-1600.jpg"
-    sizes="
-      (min-width: 768px) 50vw,
-      (min-width: 1024px) 66vw,
-      100vw"
-    srcset="
-      /images/test-400.jpg 400w,
-      /images/test-800.jpg 800w,
-      /images/test-1200.jpg 1200w">
-</div>`,
+    <div responsive-background-image>
+      <img src="/images/test-1600.jpg"
+        sizes="
+          (min-width: 768px) 50vw,
+          (min-width: 1024px) 66vw,
+          100vw"
+        srcset="
+          /images/test-400.jpg 400w,
+          /images/test-800.jpg 800w,
+          /images/test-1200.jpg 1200w">
+    </div>`,
         "It is important to note that browsers which don't support HTML5's srcset (i.e. IE11) will ignore it and use src instead. If we really need to support IE11 and we want to provide this feature for performance reasons, we can use a JavaScript polyfill, e.g. Picturefill (link in the references).",
         'For icons, I would also opt to use SVGs and icon fonts where possible, as they render very crisply regardless of resolution.',
       ],

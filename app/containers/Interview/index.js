@@ -15,7 +15,7 @@ import {
   makeSelectSelectedCategoryList,
 } from 'containers/WorkSpace/selectors';
 
-import { questionAnswered } from 'containers/WorkSpace/actions';
+import { questionAnswered, removeCategory } from 'containers/WorkSpace/actions';
 
 import injectReducer from 'utils/injectReducer';
 import makeSelectInterview from './selectors';
@@ -32,6 +32,7 @@ import {
   loadingFinished,
   finishQuestion,
   reset,
+  finishInterview,
 } from './actions';
 
 export class Interview extends React.Component {
@@ -55,6 +56,25 @@ export class Interview extends React.Component {
     }
   }
 
+  checkRemainingQuestions() {
+    const { selectedCategoryList, selectedCategories } = this.props;
+
+    // Clean answered categories
+    selectedCategoryList.forEach(categoryName => {
+      if (!selectedCategories[categoryName].length) {
+        this.props.removeCategory(categoryName);
+      }
+    });
+
+    const remainingQuestions = selectedCategoryList.some(
+      categoryName => selectedCategories[categoryName].length,
+    );
+
+    if (!remainingQuestions) {
+      this.props.finishInterview();
+    }
+  }
+
   getQuestion() {
     const { selectedCategories, selectedCategoryList } = this.props;
 
@@ -67,18 +87,12 @@ export class Interview extends React.Component {
 
     const blockIndex = Math.floor(Math.random() * selectedCategory.length);
 
-    // TODO:
-    // if (blockIndex === 0) {
-    //   all questions are done
-    //   show results
-    // }
-
     const block = selectedCategory[blockIndex];
 
     this.props.getQuestion(categoryName, blockIndex, block);
   }
 
-  questionAnswered() {
+  async questionAnswered() {
     const {
       myAnswer,
       block,
@@ -90,14 +104,20 @@ export class Interview extends React.Component {
       ...block,
     };
 
-    this.props.questionAnswered(question, blockIndex, currentCategory);
+    await this.props.questionAnswered(question, blockIndex, currentCategory);
 
-    this.props.finishQuestion();
+    await this.props.finishQuestion();
+
+    await this.checkRemainingQuestions();
   }
 
   goNext() {
-    this.props.reset();
-    this.getQuestion();
+    if (this.props.interview.allQuestionsAnswered) {
+      this.props.history.push('/results');
+    } else {
+      this.props.reset();
+      this.getQuestion();
+    }
   }
 
   toggleSpoiler() {
@@ -118,6 +138,7 @@ export class Interview extends React.Component {
       myAnswerShown,
       answerShown,
       readyToGo,
+      allQuestionsAnswered,
     } = this.props.interview;
     if (loaded) {
       return (
@@ -180,7 +201,9 @@ export class Interview extends React.Component {
             ) : (
               <Fragment>
                 <button className={style.control} onClick={this.goNext}>
-                  Go to the next question
+                  {allQuestionsAnswered
+                    ? 'Go to the results'
+                    : 'Go to the next question'}
                 </button>
               </Fragment>
             )}
@@ -230,6 +253,7 @@ Interview.propTypes = {
     loaded: PropTypes.bool,
     loading: PropTypes.bool,
     readyToGo: PropTypes.bool,
+    allQuestionsAnswered: PropTypes.bool,
   }),
   getQuestion: PropTypes.func,
   checkAnswer: PropTypes.func,
@@ -237,10 +261,12 @@ Interview.propTypes = {
   showMyAnswer: PropTypes.func,
   hideMyAnswer: PropTypes.func,
   questionAnswered: PropTypes.func,
+  removeCategory: PropTypes.func,
   startLoading: PropTypes.func,
   loadingFinished: PropTypes.func,
   finishQuestion: PropTypes.func,
   reset: PropTypes.func,
+  finishInterview: PropTypes.func,
   selectedCategories: PropTypes.object,
   selectedCategoryList: PropTypes.array,
   history: PropTypes.shape({
@@ -266,8 +292,10 @@ function mapDispatchToProps(dispatch) {
     loadingFinished: () => dispatch(loadingFinished()),
     questionAnswered: (question, questionIndex, categoryName) =>
       dispatch(questionAnswered(question, questionIndex, categoryName)),
+    removeCategory: categoryName => dispatch(removeCategory(categoryName)),
     finishQuestion: () => dispatch(finishQuestion()),
     reset: () => dispatch(reset()),
+    finishInterview: () => dispatch(finishInterview()),
   };
 }
 
