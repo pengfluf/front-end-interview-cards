@@ -13,7 +13,7 @@ import {
 } from '../constants';
 
 describe('WorkSpace actions', () => {
-  describe('copyCategories Action', () => {
+  describe('copyCategories action', () => {
     it('Returns the correct type and passed arguments', () => {
       const categories = { HTML: [], JS: [] };
       const categoryList = ['HTML', 'JS'];
@@ -27,7 +27,7 @@ describe('WorkSpace actions', () => {
     });
   });
 
-  describe('addCategory Action', () => {
+  describe('addCategory action', () => {
     it('Returns the correct type and passed arguments', () => {
       const categoryName = 'HTML';
       const category = [{ question: 'question' }, { question: 'question' }];
@@ -41,7 +41,7 @@ describe('WorkSpace actions', () => {
     });
   });
 
-  describe('removeCategory Action', () => {
+  describe('removeCategory action', () => {
     it('Returns the correct type and passed arguments', () => {
       const categoryName = 'HTML';
 
@@ -53,7 +53,7 @@ describe('WorkSpace actions', () => {
     });
   });
 
-  describe('questionAnswered Action', () => {
+  describe('questionAnswered action', () => {
     it('Returns the correct type and passed arguments', () => {
       const question = {
         question: 'question',
