@@ -70,9 +70,10 @@ module.exports = require('./webpack.base.babel')({
     }),
 
     new WebpackPwaManifest({
-      name: 'React Boilerplate',
-      short_name: 'React BP',
-      description: 'My React Boilerplate-based project!',
+      name: 'Frontend Interview Cards',
+      short_name: 'Frontend Interview Cards',
+      description:
+        'Train your frontend theoretical and practical (a bit) skills, prepare for the interview properly.',
       background_color: '#fafafa',
       theme_color: '#b1624d',
       icons: [
