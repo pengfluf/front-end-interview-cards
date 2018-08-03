@@ -1137,7 +1137,13 @@ class Student extends Person {
     {
       question:
         'Can you offer a use case for the new arrow => function syntax? How does this new syntax differ from other functions?',
-      answer: ['TODO'],
+      answer: [
+        'Return expression ((args) => expression) without curly braces',
+        "With curly braces 'return' is required (when the body of function is larger than one expression)",
+        "Don't have its own 'this' and 'arguments'. When executed, receive those ones from the environment",
+        "Can't be used as constructors with 'new'",
+        'Arrow functions often use as callbacks or as anonymous functions.',
+      ],
     },
     {
       question:
