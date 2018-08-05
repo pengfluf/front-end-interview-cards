@@ -16,8 +16,13 @@ import {
   makeSelectSelectedCategoryList,
   makeSelectCategories,
   makeSelectCategoryList,
+  makeSelectRemainingQuestions,
 } from 'containers/WorkSpace/selectors';
-import { addCategory, removeCategory } from 'containers/WorkSpace/actions';
+import {
+  addCategory,
+  removeCategory,
+  updateRemainingQuestions,
+} from 'containers/WorkSpace/actions';
 
 import injectReducer from 'utils/injectReducer';
 import makeSelectStartPane from './selectors';
@@ -32,10 +37,23 @@ export class StartPane extends React.Component {
   }
 
   handleCheckboxChange(categoryName, category) {
-    if (this.props.selectedCategoryList.some(name => name === categoryName)) {
-      this.props.removeCategory(categoryName);
+    const { selectedCategoryList, categories, remainingQuestions } = this.props;
+    const categoryLength = categories[categoryName].length;
+
+    // Reduction due to full-name variables
+    // are already declared in the upper scope
+    const {
+      addCategory: addCtg,
+      removeCategory: removeCtg,
+      updateRemainingQuestions: updateRemaining,
+    } = this.props;
+
+    if (selectedCategoryList.some(name => name === categoryName)) {
+      removeCtg(categoryName);
+      updateRemaining(remainingQuestions - categoryLength);
     } else {
-      this.props.addCategory(categoryName, category);
+      addCtg(categoryName, category);
+      updateRemaining(remainingQuestions + categoryLength);
     }
   }
 
@@ -93,6 +111,8 @@ StartPane.propTypes = {
   categoryList: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   addCategory: PropTypes.func,
   removeCategory: PropTypes.func,
+  remainingQuestions: PropTypes.number,
+  updateRemainingQuestions: PropTypes.func,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -100,6 +120,7 @@ const mapStateToProps = createStructuredSelector({
   selectedCategoryList: makeSelectSelectedCategoryList(),
   categories: makeSelectCategories(),
   categoryList: makeSelectCategoryList(),
+  remainingQuestions: makeSelectRemainingQuestions(),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -107,6 +128,8 @@ function mapDispatchToProps(dispatch) {
     addCategory: (categoryName, category) =>
       dispatch(addCategory(categoryName, category)),
     removeCategory: categoryName => dispatch(removeCategory(categoryName)),
+    updateRemainingQuestions: value =>
+      dispatch(updateRemainingQuestions(value)),
   };
 }
 

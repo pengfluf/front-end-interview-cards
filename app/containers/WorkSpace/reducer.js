@@ -10,9 +10,11 @@ import {
   ADD_CATEGORY,
   REMOVE_CATEGORY,
   QUESTION_ANSWERED,
+  UPDATE_REMAINING_QUESTIONS,
 } from './constants';
 
 export const initialState = fromJS({
+  remainingQuestions: 0,
   selectedCategories: {
     HTML: [],
     CSS: [],
@@ -73,6 +75,8 @@ function workSpaceReducer(state = initialState, action) {
           action.categoryName,
           action.questionIndex,
         ]);
+    case UPDATE_REMAINING_QUESTIONS:
+      return state.set('remainingQuestions', action.value);
     default:
       return state;
   }

@@ -13,9 +13,14 @@ import { compose } from 'redux';
 import {
   makeSelectSelectedCategories,
   makeSelectSelectedCategoryList,
+  makeSelectRemainingQuestions,
 } from 'containers/WorkSpace/selectors';
 
-import { questionAnswered, removeCategory } from 'containers/WorkSpace/actions';
+import {
+  questionAnswered,
+  removeCategory,
+  updateRemainingQuestions,
+} from 'containers/WorkSpace/actions';
 
 import injectReducer from 'utils/injectReducer';
 import makeSelectInterview from './selectors';
@@ -57,7 +62,11 @@ export class Interview extends React.Component {
   }
 
   checkRemainingQuestions() {
-    const { selectedCategoryList, selectedCategories } = this.props;
+    const {
+      selectedCategoryList,
+      selectedCategories,
+      remainingQuestions,
+    } = this.props;
 
     // Clean answered categories
     selectedCategoryList.forEach(categoryName => {
@@ -66,11 +75,7 @@ export class Interview extends React.Component {
       }
     });
 
-    const remainingQuestions = selectedCategoryList.some(
-      categoryName => selectedCategories[categoryName].length,
-    );
-
-    if (!remainingQuestions) {
+    if (remainingQuestions === 0) {
       this.props.finishInterview();
     }
   }
@@ -105,6 +110,10 @@ export class Interview extends React.Component {
     };
 
     await this.props.questionAnswered(question, blockIndex, currentCategory);
+
+    await this.props.updateRemainingQuestions(
+      this.props.remainingQuestions - 1,
+    );
 
     await this.props.finishQuestion();
 
@@ -269,6 +278,8 @@ Interview.propTypes = {
   finishInterview: PropTypes.func,
   selectedCategories: PropTypes.object,
   selectedCategoryList: PropTypes.array,
+  remainingQuestions: PropTypes.number,
+  updateRemainingQuestions: PropTypes.func,
   history: PropTypes.shape({
     push: PropTypes.func,
   }),
@@ -278,6 +289,7 @@ const mapStateToProps = createStructuredSelector({
   interview: makeSelectInterview(),
   selectedCategories: makeSelectSelectedCategories(),
   selectedCategoryList: makeSelectSelectedCategoryList(),
+  remainingQuestions: makeSelectRemainingQuestions(),
 });
 
 function mapDispatchToProps(dispatch) {
@@ -296,6 +308,8 @@ function mapDispatchToProps(dispatch) {
     finishQuestion: () => dispatch(finishQuestion()),
     reset: () => dispatch(reset()),
     finishInterview: () => dispatch(finishInterview()),
+    updateRemainingQuestions: value =>
+      dispatch(updateRemainingQuestions(value)),
   };
 }
 

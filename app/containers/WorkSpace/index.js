@@ -18,9 +18,11 @@ import Results from 'containers/Results';
 
 import data, { list } from 'data';
 import injectReducer from 'utils/injectReducer';
-import makeSelectWorkSpace from './selectors';
+import { makeSelectRemainingQuestions } from './selectors';
 import reducer from './reducer';
 import { copyCategories } from './actions';
+
+import style from './style.scss';
 
 export class WorkSpace extends React.Component {
   componentDidMount() {
@@ -28,8 +30,15 @@ export class WorkSpace extends React.Component {
   }
 
   render() {
+    const { remainingQuestions } = this.props;
     return (
       <div>
+        {remainingQuestions ? (
+          <div className={style.remainingQuestions}>
+            {this.props.location.pathname === '/' ? 'Selected' : 'Remaining'}{' '}
+            Questions: {remainingQuestions}
+          </div>
+        ) : null}
         <Switch>
           <Route path="/results" component={Results} />
           <Route path="/interview" component={Interview} />
@@ -42,10 +51,14 @@ export class WorkSpace extends React.Component {
 
 WorkSpace.propTypes = {
   copyCategories: PropTypes.func,
+  remainingQuestions: PropTypes.number,
+  location: PropTypes.shape({
+    pathname: PropTypes.string,
+  }),
 };
 
 const mapStateToProps = createStructuredSelector({
-  workspace: makeSelectWorkSpace(),
+  remainingQuestions: makeSelectRemainingQuestions(),
 });
 
 function mapDispatchToProps(dispatch) {

@@ -29,6 +29,11 @@ const makeSelectSelectedCategoryList = () =>
     substate.get('selectedCategoryList').toJS(),
   );
 
+const makeSelectRemainingQuestions = () =>
+  createSelector(selectWorkSpaceDomain, substate =>
+    substate.get('remainingQuestions'),
+  );
+
 /**
  * Default selector used by WorkSpace
  */
@@ -43,4 +48,5 @@ export {
   makeSelectCategoryList,
   makeSelectSelectedCategories,
   makeSelectSelectedCategoryList,
+  makeSelectRemainingQuestions,
 };

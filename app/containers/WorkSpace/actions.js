@@ -9,6 +9,7 @@ import {
   ADD_CATEGORY,
   REMOVE_CATEGORY,
   QUESTION_ANSWERED,
+  UPDATE_REMAINING_QUESTIONS,
 } from './constants';
 
 export function copyCategories(categories, categoryList) {
@@ -40,5 +41,12 @@ export function questionAnswered(question, questionIndex, categoryName) {
     question,
     questionIndex,
     categoryName,
+  };
+}
+
+export function updateRemainingQuestions(value) {
+  return {
+    type: UPDATE_REMAINING_QUESTIONS,
+    value,
   };
 }
