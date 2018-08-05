@@ -35,14 +35,14 @@ export class WorkSpace extends React.Component {
       <div>
         {remainingQuestions ? (
           <div className={style.remainingQuestions}>
-            {this.props.location.pathname === '/' ? 'Selected' : 'Remaining'}{' '}
+            {this.props.location.pathname !== '/' ? 'Remaining' : 'Selected'}{' '}
             Questions: {remainingQuestions}
           </div>
         ) : null}
         <Switch>
           <Route path="/results" component={Results} />
           <Route path="/interview" component={Interview} />
-          <Route path="/" component={StartPane} />
+          <Route exact path="/" component={StartPane} />
         </Switch>
       </div>
     );
